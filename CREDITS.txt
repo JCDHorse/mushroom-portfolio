@@ -1,0 +1,6 @@
+3D Assets Credits
+----------------
+File: /public/assets/models/Tree.glb
+Asset: Tree by Poly by Google [CC-BY]
+Source: https://poly.pizza/m/6pwiq7hSrHr
+Original License: https://creativecommons.org/licenses/by/3.0/
