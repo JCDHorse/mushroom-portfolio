@@ -3,6 +3,7 @@ import './App.css'
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import {OrbitControls, OrthographicCamera, TransformControls, useGLTF} from '@react-three/drei'
 import {Mushroom} from "./mushroom/Mushroom.tsx";
+import {AMuscaria} from "./mushroom/AMuscaria.tsx";
 import {EffectComposer, Bloom} from "@react-three/postprocessing";
 import {Tree} from "./Tree.tsx";
 import * as THREE from "three";
@@ -27,6 +28,9 @@ function App() {
                   <planeGeometry args={[10, 10] } />
                   <meshStandardMaterial color={"green"}/>
               </mesh>
+              <AMuscaria hatScale={[2, 1, 2]} footScale={[1,2,1]} position={[0.8, 0, 0.3]} scale={[0.05, 0.05, 0.05]}/>
+              <AMuscaria rotateX={() => Math.PI / 5} hatScale={[0.6, 1, 0.6]} footScale={[1,1.2,1]} position={[0.6, 0, 0.1]} scale={[0.05, 0.05, 0.05]}/>
+              <AMuscaria hatScale={[1, 1, 1]} footScale={[1,1.6,1]} position={[0.6, 0, 0.8]} scale={[0.05, 0.05, 0.05]}/>
               <Tree position={[-0.9, 0, 0.9]} rotateY={Math.PI / 2} />
               <Tree position={[-0.9, 0, 0.7]} rotateY={Math.PI / 2} />
               <Tree position={[-0.9, 0, 0.5]} rotateY={Math.PI / 2} />
@@ -52,8 +56,8 @@ function App() {
               <Mushroom footXZScale={0.3} position={[-0.,0,0.4]} rotation={[ 0, 0, 0]}>
               </Mushroom>
               <ambientLight intensity={0.3} castShadow />
-              <directionalLight position={[100, 400, 100]} intensity={0.3}   castShadow />
-              <OrbitControls maxPolarAngle={Math.PI / 2.4} maxDistance={4} minDistance={1} enablePan={false}/>
+              <directionalLight position={[-5, 8, -5]} intensity={1}   castShadow />
+              <OrbitControls/>
               <EffectComposer>
                   <Bloom intensity={0.3} castShadow />
               </EffectComposer>
