@@ -2,11 +2,11 @@ import {JSX, useState, useEffect} from 'react'
 import './App.css'
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import {OrbitControls, OrthographicCamera, TransformControls, useGLTF} from '@react-three/drei'
-import {Mushroom} from "./mushroom/Mushroom.tsx";
-import {AMuscaria} from "./mushroom/AMuscaria.tsx";
+import {Mushroom, MushroomField} from "./mushroom/Mushroom.tsx";
 import {EffectComposer, Bloom} from "@react-three/postprocessing";
-import {Tree} from "./Tree.tsx";
+import {Tree, TreeField} from "./Tree.tsx";
 import * as THREE from "three";
+import {Vector3} from "three";
 
 function BackgroundColor() {
     const { scene } = useThree();
@@ -17,6 +17,7 @@ function BackgroundColor() {
 
     return null
 }
+
 function App() {
 
   return (
@@ -28,35 +29,13 @@ function App() {
                   <planeGeometry args={[10, 10] } />
                   <meshStandardMaterial color={"green"}/>
               </mesh>
-              <AMuscaria hatScale={[2, 1, 2]} footScale={[1,2,1]} position={[0.8, 0, 0.3]} scale={[0.05, 0.05, 0.05]}/>
-              <AMuscaria rotateX={() => Math.PI / 5} hatScale={[0.6, 1, 0.6]} footScale={[1,1.2,1]} position={[0.6, 0, 0.1]} scale={[0.05, 0.05, 0.05]}/>
-              <AMuscaria hatScale={[1, 1, 1]} footScale={[1,1.6,1]} position={[0.6, 0, 0.8]} scale={[0.05, 0.05, 0.05]}/>
-              <Tree position={[-0.9, 0, 0.9]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, 0.7]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, 0.5]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, 0.3]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, 0.1]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, -0.1]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, -0.3]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, -0.5]} rotateY={Math.PI / 2} />
-              <Tree position={[-0.9, 0, -0.7]} rotateY={Math.PI / 2} />
-              <Tree position={[0.9, 0, 0.9]}  />
-              <Tree position={[0.9, 0, -0.9]} />
-              <Tree position={[-0.9, 0, -0.9]}/>
+              <TreeField center={new Vector3(0,0,0)} innerRadius={3} outerRadius={5} count={1000}/>
+              <MushroomField maxScale={1} minScale={0.4} type={"Porcini"} center={new Vector3(0,0,0)} innerRadius={2} outerRadius={3} count={200}/>
+              <MushroomField maxScale={1.2} minScale={0.4} type={"AMuscaria"} center={new Vector3(0,0,0)} innerRadius={1} outerRadius={2} count={100}/>
+              <MushroomField maxScale={1} minScale={0.4} type={"Chanterelle"} center={new Vector3(0,0,0)} innerRadius={0} outerRadius={1} count={100}/>
 
-              <Mushroom castShadow hatColor={'#54e397'} footColor={'#d6aa73'} footXZScale={2.3} hatXZScale={10} hatYScale={2} position={[0.3, 0, 0.1]} scale={[1, 5, 1]}/>
-              <Mushroom hatXZScale={5} position={[-0.6, 0, 0.4]}/>
-              <Mushroom  hatXZScale={3} position={[-0.3, 0, -0.1]} />
-              <Mushroom hatXZScale={2} position={[0.1,0,0.1]}  rotation={[ 0, 0, 0]}>
-              </Mushroom>
-              <Mushroom hatXZScale={4} hatYScale={5} position={[-0.1,0,0.1]}  rotation={[ 0, 0, 0]}>
-              </Mushroom>
-              <Mushroom hatXZScale={2} hatYScale={1} position={[-0.4,0,0.2]}  rotation={[ 0, 0, 0]}>
-              </Mushroom>
-              <Mushroom footXZScale={0.3} position={[-0.,0,0.4]} rotation={[ 0, 0, 0]}>
-              </Mushroom>
-              <ambientLight intensity={0.3} castShadow />
-              <directionalLight position={[-5, 8, -5]} intensity={1}   castShadow />
+              <ambientLight intensity={Math.PI / 10} castShadow />
+              <directionalLight position={[-5, 8, -5]} intensity={2}   castShadow />
               <OrbitControls/>
               <EffectComposer>
                   <Bloom intensity={0.3} castShadow />
@@ -64,7 +43,6 @@ function App() {
           </Canvas>
       </div>
     </>
-  )
-}
+  ) }
 
 export default App

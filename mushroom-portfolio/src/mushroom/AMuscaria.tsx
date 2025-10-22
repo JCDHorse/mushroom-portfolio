@@ -6,6 +6,8 @@ import * as THREE from 'three'
 import React, {JSX, useRef} from 'react'
 import { useGLTF } from '@react-three/drei'
 import { type GLTF } from 'three-stdlib'
+import {generatePointsInRing, randomFloat, randomFloatNeg} from "../utils.ts";
+import {Vector3} from "three";
 
 const glbPath = '/assets/models/mush-musc.glb';
 
@@ -23,13 +25,40 @@ type GLTFResult = GLTF & {
 }
 
 type AMuscariaProps = JSX.IntrinsicElements['group'] & {
-    hatScale?: [x: number, y: number, z: number];
-    footScale?: [x: number, y: number, z: number];
+    scaleFactor: number;
+    hatScale?: Vector3;
+    footScale?: Vector3;
+}
+
+export function AMuscariaField({count = 10, innerRadius = 0, outerRadius = 1, position = new Vector3(0, 0, 0)}) {
+    const positions = generatePointsInRing(position, innerRadius, outerRadius, count);
+    console.log(positions);
+    const muscs = Array.from({length: count}, (_, i) => {
+        return <RandomAMuscaria key={i} position={positions[i]}/>
+    });
+    return <>{muscs}</>
+}
+
+export function RandomAMuscaria({
+    position = new Vector3(0,0, 0)
+}: { position?: Vector3 }) {
+    const hatXZScale = randomFloat(3, 0.6);
+    const hatYScale = randomFloat(3, 0.3);
+
+    const footXZScale = 1;
+    const footYScale = randomFloat(3, 0.3);
+
+    const hatScale: [x: number, y: number, z: number] = [hatXZScale * DEFAULT_SCALE_FACTOR, hatYScale * DEFAULT_SCALE_FACTOR, hatXZScale * DEFAULT_SCALE_FACTOR];
+    const footScale: [x: number, y: number, z: number] = [footXZScale * DEFAULT_SCALE_FACTOR, footYScale * DEFAULT_SCALE_FACTOR, footXZScale * DEFAULT_SCALE_FACTOR];
+    return (
+        <AMuscaria position={position} hatScale={hatScale} footScale={footScale}/>
+    )
 }
 
 export function AMuscaria({
-    hatScale = [1.48, 1, 1.48],
-    footScale = [1, 1.031, 1],
+    scaleFactor,
+    hatScale = new Vector3(1.48, 1, 1.48),
+    footScale = new Vector3(1, 1.031, 1),
     ...props
 } : AMuscariaProps) {
     const { nodes, materials } = useGLTF(glbPath) as GLTFResult
@@ -41,18 +70,18 @@ export function AMuscaria({
                 geometry={nodes.Foot.geometry}
                 material={materials['Material.002']}
                 position={[0, 0, 0]}
-                scale={footScale}
+                scale={footScale?.multiplyScalar(scaleFactor)}
             />
             <mesh
                 castShadow
                 receiveShadow
                 geometry={nodes.Collar.geometry}
                 material={nodes.Collar.material}
-                position={[0, 3 * footScale[1], 0]}
+                position={[0, 3 * footScale?.y, 0]}
                 rotation={[0, -0.071, 0]}
-                scale={1.152}
+                scale={1.152 * scaleFactor }
             />
-            <group position={[0, 5 * footScale[1], 0]} scale={hatScale}>
+            <group position={[0, 5 * footScale.y, 0]} scale={hatScale?.multiplyScalar(scaleFactor)}>
                 <mesh
                     castShadow
                     receiveShadow
