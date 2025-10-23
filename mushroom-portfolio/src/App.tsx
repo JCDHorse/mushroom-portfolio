@@ -30,8 +30,8 @@ function App() {
                   <meshStandardMaterial color={"green"}/>
               </mesh>
               <TreeField center={new Vector3(0,0,0)} innerRadius={3} outerRadius={5} count={1000}/>
-              <MushroomField maxScale={1} minScale={0.4} type={"Porcini"} center={new Vector3(0,0,0)} innerRadius={2} outerRadius={3} count={200}/>
-              <MushroomField maxScale={1.2} minScale={0.4} type={"AMuscaria"} center={new Vector3(0,0,0)} innerRadius={1} outerRadius={2} count={100}/>
+              <MushroomField maxScale={1} minScale={0.4} type={"Porcini"} center={new Vector3(2,0,2)} innerRadius={0} outerRadius={10} count={200}/>
+              <MushroomField maxScale={1.2} minScale={0.4} type={"AMuscaria"} center={new Vector3(0,0,0)} innerRadius={0} outerRadius={2} count={300}/>
               <MushroomField maxScale={1} minScale={0.4} type={"Chanterelle"} center={new Vector3(0,0,0)} innerRadius={0} outerRadius={1} count={100}/>
 
               <ambientLight intensity={Math.PI / 10} castShadow />
