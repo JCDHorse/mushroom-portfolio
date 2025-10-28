@@ -7,6 +7,8 @@ import React, { useRef, type JSX } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { type GLTF } from 'three-stdlib';
 import {Vector3} from "three";
+import {generatePointsInRing} from "./utils.ts";
+import {RandomAMuscaria} from "./mushroom/AMuscaria.tsx";
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -34,6 +36,27 @@ export function Tree({
             <mesh castShadow receiveShadow geometry={nodes.tree01.geometry} material={materials.Mat} />
         </group>
     )
+}
+
+type TreeFieldProps = {
+    center: Vector3,
+    innerRadius: number,
+    outerRadius: number,
+    count: number,
+}
+
+export function TreeField({
+    center = new Vector3(0, 0, 0),
+    innerRadius = 0,
+    outerRadius = 1,
+    count = 1,
+}: TreeFieldProps) {
+
+    const positions = generatePointsInRing(center, innerRadius, outerRadius, count);
+    const trees = Array.from({length: count}, (_, i) => {
+        return <Tree scale={[1,1,1]} key={i} position={positions[i]}/>
+    });
+    return <>{trees}</>
 }
 
 useGLTF.preload('/assets/models/Tree.glb/Tree.glb')
