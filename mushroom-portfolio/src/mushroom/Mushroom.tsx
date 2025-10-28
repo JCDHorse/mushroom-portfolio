@@ -1,80 +1,61 @@
-import {Foot} from "./Foot.tsx";
-import {Hat} from "./Hat.tsx";
-import React, {type JSX} from "react";
-import type {GLTF} from "three-stdlib";
-import {Vector3} from "three";
-import {useGLTF} from "@react-three/drei";
-import {MUSHROOMS} from "./MushroomList.ts";
-import {generatePointsInRing, getRandomAngle, randomFloat} from "../utils.ts";
-import {BaseModel} from "../BaseModel.tsx";
-import {Porcini} from "./Porcini.tsx";
+import React from "react";
 import {AMuscaria} from "./AMuscaria.tsx";
 import {Chanterelle} from "./Chanterelle.tsx";
+import {Porcini} from "./Porcini.tsx";
+import {generatePointsInRing} from "../utils.ts";
+import type {Vector3} from "three";
 
-const colors = ['red', 'yellow', 'blue', 'magenta', 'cyan', 'orange'];
+export type MushroomType =
+    "AMuscaria" |
+    "Porcini" |
+    "Chanterelle";
 
-type MushroomProps = JSX.IntrinsicElements['group'] & {
-    type: string;
-    scaleFactor?: number;
+export interface MushroomInfo {
+    type: MushroomType;
+    model: string;
+    defaultScaleFactor: number;
 }
 
-type MushRoomFieldProps = {
-    type: string;
-    center: Vector3;
-    innerRadius: number;
-    outerRadius: number;
-    count: number;
-    maxScale: number;
-    minScale: number;
+type MushroomComponentMap = {
+    AMuscaria: typeof AMuscaria,
+    Chanterelle: typeof Chanterelle,
+    Porcini: typeof Porcini,
 }
 
-export function Mushroom({
-    type,
-    scaleFactor = 1,
-    ...props
-} : MushroomProps) {
-
-    const mushroomType = MUSHROOMS[type];
-
-    if (!mushroomType) {
-        throw new Error("Mushroom: Mushroom type invalid");
-    }
-
-    scaleFactor *= mushroomType.defaultScaleFactor;
-
-    switch (type) {
-        case "Porcini":
-            return <Porcini scaleFactor={scaleFactor} {...props} />;
-        case "AMuscaria":
-            return <AMuscaria scaleFactor={scaleFactor} {...props} />;
-        case "Chanterelle":
-            return <Chanterelle scaleFactor={scaleFactor} {...props} />;
-    }
-
-    return <BaseModel src={mushroomType.model} scaleFactor={scaleFactor} {...props}/>
+const MushroomRegistry: MushroomComponentMap = {
+    AMuscaria,
+    Chanterelle,
+    Porcini,
 }
 
-export function MushroomField({
-    type = "AMuscaria",
-    center = new Vector3(0, 0, 0),
-    innerRadius = 0,
-    outerRadius = 1,
-    count = 1,
-    maxScale = 1,
-    minScale = 1,
- }: MushRoomFieldProps) {
+export function Mushroom<T extends keyof MushroomComponentMap>(
+    props: {
+        type: T,
+        position: Vector3
+    } & React.ComponentProps<MushroomComponentMap[T]>) {
+    const { type, ...rest } = props;
+    const Component = MushroomRegistry[type];
+    return React.createElement(Component, rest);
+}
 
-    const mushroomType = MUSHROOMS[type];
+export function MushroomField<T extends keyof MushroomComponentMap>(
+    props: {
+        type: T,
+        center: Vector3,
+        outerRadius: number,
+        innerRadius: number,
+        count: number,
+    } & React.ComponentProps<MushroomComponentMap[T]>) {
 
-    if (!mushroomType) {
-        throw new Error("Mushroom: Mushroom type invalid");
-    }
-
+    const { type, center, outerRadius, innerRadius, count, position, ...rest } = props;
     const positions = generatePointsInRing(center, innerRadius, outerRadius, count);
-    const scaleFactors = Array.from({length: count}, (_, __) => randomFloat(maxScale, minScale));
 
-    const mushs = Array.from({length: count}, (_, i) => {
-        return <Mushroom key={i} scaleFactor={scaleFactors[i]} rotation={[0, getRandomAngle(), 0]} position={positions[i]} type={type}/>
-    });
-    return <>{mushs}</>
+    return (
+        <>
+            {positions.map((position, index) => (
+                <Mushroom key={index} type={type} position={position}/>
+            ))}
+        </>
+    );
 }
+

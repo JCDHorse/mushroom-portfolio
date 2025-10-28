@@ -12,6 +12,10 @@ export function getRandomAngle(): number {
     return Math.random() * 2 * Math.PI;
 }
 
+export function cloneAndScaleVector(vector: Vector3, scale: number) {
+    return new Vector3(vector.x * scale, vector.y * scale, vector.z * scale);
+}
+
 export function generatePointsInRing(center: Vector3, innerRadius: number, outerRadius: number, count = 0) {
     if (innerRadius < 0 || outerRadius < 0 || outerRadius <= innerRadius) {
         throw new Error("generatePointsInRing: invalid radius");
