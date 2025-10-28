@@ -1,9 +1,9 @@
-import React from "react";
+import React, {type ComponentProps} from "react";
 import {AMuscaria} from "./AMuscaria.tsx";
 import {Chanterelle} from "./Chanterelle.tsx";
 import {Porcini} from "./Porcini.tsx";
 import {generatePointsInRing} from "../utils.ts";
-import type {Vector3} from "three";
+import {Vector3} from "three";
 
 export type MushroomType =
     "AMuscaria" |
@@ -28,11 +28,11 @@ const MushroomRegistry: MushroomComponentMap = {
     Porcini,
 }
 
-export function Mushroom<T extends keyof MushroomComponentMap>(
-    props: {
-        type: T,
-        position: Vector3
-    } & React.ComponentProps<MushroomComponentMap[T]>) {
+type MushroomProps<T extends keyof MushroomComponentMap> = ComponentProps<MushroomComponentMap[T]> & {
+    type: T,
+}
+
+export function Mushroom<T extends keyof MushroomComponentMap>(props: MushroomProps<T>) {
     const { type, ...rest } = props;
     const Component = MushroomRegistry[type];
     return React.createElement(Component, rest);
@@ -45,15 +45,17 @@ export function MushroomField<T extends keyof MushroomComponentMap>(
         outerRadius: number,
         innerRadius: number,
         count: number,
-    } & React.ComponentProps<MushroomComponentMap[T]>) {
+    } & MushroomProps<T>) {
 
-    const { type, center, outerRadius, innerRadius, count, position, ...rest } = props;
+    const { type, center, outerRadius, innerRadius, count, ...rest } = props;
+    console.log(`rest: ${JSON.stringify(props)}`)
     const positions = generatePointsInRing(center, innerRadius, outerRadius, count);
 
     return (
         <>
             {positions.map((position, index) => (
-                <Mushroom key={index} type={type} position={position}/>
+                // @ts-ignore
+                <Mushroom key={index} type={type} position={position} {...rest} />
             ))}
         </>
     );

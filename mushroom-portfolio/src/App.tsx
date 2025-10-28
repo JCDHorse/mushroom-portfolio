@@ -25,7 +25,7 @@ function Scene() {
                 <meshStandardMaterial color={"green"}/>
             </mesh>
             <Mushroom
-                type={"AMuscaria"}
+                type={"AMuscaria"} position={[0, 0, 0]}
             />
             <Mushroom
                 type={"Chanterelle"}
@@ -37,7 +37,7 @@ function Scene() {
                 scaleFactor={2}
                 hatScale={new Vector3(2, 2, 2)}
             />
-            <MushroomField type={"Porcini"} center={new Vector3(0,0,0)} outerRadius={2} innerRadius={0} count={1000}/>
+            <MushroomField type={"Porcini"}  center={new Vector3(0,0,0)} outerRadius={2} innerRadius={0} count={1000}/>
             <TreeField center={new Vector3(0,0,0)} innerRadius={3} outerRadius={5} count={1000}/>
             <ambientLight intensity={Math.PI / 4}/>
             <directionalLight position={[-5, 8, -5]} intensity={2}   castShadow />
