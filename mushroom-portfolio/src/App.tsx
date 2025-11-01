@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import './App.css'
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls } from '@react-three/drei'
+import {OrbitControls, OrthographicCamera} from '@react-three/drei'
 import {Mushroom, MushroomField} from "./mushroom";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { TreeField } from "./Tree.tsx";
@@ -19,32 +19,68 @@ function BackgroundColor() {
 function Scene() {
     return (
         <>
-            <BackgroundColor/>
-            <mesh receiveShadow scale={[10, 10, 1]} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[10, 10] } />
-                <meshStandardMaterial color={"green"}/>
-            </mesh>
-            <Mushroom
-                type={"AMuscaria"} position={[0, 0, 0]}
-            />
-            <Mushroom
-                type={"Chanterelle"}
-                position={[1, 0, 1]}
-            />
-            <Mushroom
-                type={"Porcini"}
-                position={[-1, 0, -1]}
-                scaleFactor={2}
-                hatScale={new Vector3(2, 2, 2)}
-            />
-            <MushroomField type={"Porcini"}  center={new Vector3(0,0,0)} outerRadius={2} innerRadius={0} count={1000}/>
-            <TreeField center={new Vector3(0,0,0)} innerRadius={3} outerRadius={5} count={1000}/>
-            <ambientLight intensity={Math.PI / 4}/>
-            <directionalLight position={[-5, 8, -5]} intensity={2}   castShadow />
-            <OrbitControls/>
-            <EffectComposer>
-                <Bloom intensity={0.3} castShadow />
-            </EffectComposer>
+        <BackgroundColor/>
+        <mesh receiveShadow  position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[100, 100] } />
+            <meshStandardMaterial color={"green"}/>
+        </mesh>
+        <Mushroom
+            type={"AMuscaria"} position={[0, 0, 0]}
+        />
+        <Mushroom
+            type={"Chanterelle"}
+            position={[1, 0, 1]}
+        />
+        <MushroomField
+            type={"AMuscaria"}
+            hatXZScaleRange={{min: 0.6, max: 2}}
+            center={new Vector3(0,0,0)}
+            outerRadius={3}
+            innerRadius={0}
+            count={12}/>
+        <MushroomField
+            type={"Porcini"}
+            center={new Vector3(0,0,0)}
+            footYScaleRange={{min: 2.6, max: 3}}
+            footXZScaleRange={{min: 2.3, max: 3}}
+            hatXZScaleRange={{min: 2.3, max: 5}}
+            hatYScaleRange={{min: 2.2, max: 4}}
+            outerRadius={2}
+            innerRadius={0}
+            count={25}/>
+        <MushroomField
+            type={"Chanterelle"}
+            monoScaleRange={{min: 0.3, max: 1}}
+            center={new Vector3(0,0,0)}
+            outerRadius={3}
+            innerRadius={0}
+            count={95}/>
+        <ambientLight intensity={Math.PI / 3}/>
+        <directionalLight
+            position={[2, 3, 2]}
+            intensity={Math.PI / 4}
+            castShadow
+            shadow-mapSize-width={8192}
+            shadow-mapSize-height={8192}
+            shadow-camera-left={-50}
+            shadow-camera-right={50}
+            shadow-camera-top={50}
+            shadow-camera-bottom={-50}
+            shadow-camera-near={0.5}
+            shadow-camera-far={50}
+        />
+        <OrbitControls/>
+        <OrthographicCamera
+            makeDefault
+            position={[2, 2, 2]} // Vue diagonale
+            zoom={300} // Ajuste la taille apparente
+            near={-200}
+            far={200}
+        />
+
+        <EffectComposer>
+            <Bloom intensity={0.6} castShadow />
+        </EffectComposer>
         </>
     );
 }
@@ -52,8 +88,9 @@ function Scene() {
 function App() {
   return (
     <>
-      <div id="canvas-container" style={{ width: '100%', height: '100vh' }}>
-          <Canvas shadows camera={{ position: [0, 0.1, 0.4], rotation: [-Math.PI / 8, 0, 0]  }}>
+      <h1 className="text-5xl text-center">Céline Dhordain</h1>
+      <div className="h-lvh" id="canvas-container">
+          <Canvas shadows >
               <Scene/>
           </Canvas>
       </div>

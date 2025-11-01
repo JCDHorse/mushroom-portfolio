@@ -32,8 +32,10 @@ export function AMuscaria({
 }) {
     const { nodes, materials } = useGLTF(MUSH_INFO.model) as unknown as AMuscariaGLTFResult;
 
+
     const finalHatScale = cloneAndScaleVector(hatScale, scaleFactor * MUSH_INFO.defaultScaleFactor);
     const finalFootScale = cloneAndScaleVector(footScale, scaleFactor * MUSH_INFO.defaultScaleFactor);
+    console.log(`Inside: ${JSON.stringify(finalHatScale)}`);
 
     return (
         <group {...props} dispose={null}>

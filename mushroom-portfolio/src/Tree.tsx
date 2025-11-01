@@ -53,7 +53,7 @@ export function TreeField({
 
     const positions = generatePointsInRing(center, innerRadius, outerRadius, count);
     const trees = Array.from({length: count}, (_, i) => {
-        return <Tree scale={[1,1,1]} key={i} position={positions[i]}/>
+        return <Tree scale={[15,15,15]} key={i} position={positions[i]}/>
     });
     return <>{trees}</>
 }
