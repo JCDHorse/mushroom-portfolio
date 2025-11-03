@@ -3,7 +3,7 @@ import {Vector3} from "three";
 import { type MushroomInfo } from "./Mushroom.tsx";
 import {useGLTF} from "@react-three/drei";
 import type {GLTF} from "three-stdlib";
-import {cloneAndScaleVector} from "../utils.ts";
+import {cloneAndScaleVector} from "../../utils.ts";
 
 interface AMuscariaGLTFResult extends GLTF {
     nodes: {
@@ -35,7 +35,6 @@ export function AMuscaria({
 
     const finalHatScale = cloneAndScaleVector(hatScale, scaleFactor * MUSH_INFO.defaultScaleFactor);
     const finalFootScale = cloneAndScaleVector(footScale, scaleFactor * MUSH_INFO.defaultScaleFactor);
-    console.log(`Inside: ${JSON.stringify(finalHatScale)}`);
 
     return (
         <group {...props} dispose={null}>
@@ -70,6 +69,7 @@ export function AMuscaria({
                     material={nodes.Hat_2.material}
                 />
             </group>
+
         </group>
     );
 }

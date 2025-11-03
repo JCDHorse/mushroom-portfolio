@@ -7,7 +7,7 @@ import { type JSX } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { type GLTF } from 'three-stdlib';
 import {Vector3} from "three";
-import {generatePointsInRing} from "./utils.ts";
+import {generatePointsInRing} from "../utils.ts";
 
 type GLTFResult = GLTF & {
     nodes: {

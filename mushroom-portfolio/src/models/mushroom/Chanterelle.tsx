@@ -3,7 +3,7 @@ import {Vector3} from "three";
 import { type MushroomInfo } from "./Mushroom.tsx";
 import {useGLTF} from "@react-three/drei";
 import type {GLTF} from "three-stdlib";
-import {cloneAndScaleVector} from "../utils.ts";
+import {cloneAndScaleVector} from "../../utils.ts";
 
 interface ChanterelleGLTFResult extends GLTF {
     nodes: {

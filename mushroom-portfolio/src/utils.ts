@@ -8,7 +8,12 @@ export function randomFloatNeg() {
     return (Math.random() - 0.5) * 10
 }
 
-export function getRandomAngle(): number {
+export function randomAngleRangeAroundZero(min: number, max: number) {
+    const range = max - min;
+    return (Math.random() - 0.5) * range;
+}
+
+export function randomAngle(): number {
     return Math.random() * 2 * Math.PI;
 }
 
@@ -25,7 +30,7 @@ export function generatePointsInRing(center: Vector3, innerRadius: number, outer
 
     for (let i = 0; i < count; i++) {
         // random angle between 0 and 2PI
-        const angle = getRandomAngle();
+        const angle = randomAngle();
         // random radius in the ring
         const radius = Math.sqrt(Math.random() * (outerRadius ** 2 - innerRadius ** 2) + innerRadius ** 2);
 

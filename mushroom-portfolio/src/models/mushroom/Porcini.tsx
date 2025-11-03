@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import {Vector3} from "three";
+import {MeshToonMaterial, Vector3} from "three";
 import { type MushroomInfo } from "./Mushroom.tsx";
-import {useGLTF} from "@react-three/drei";
+import {GradientTexture, useGLTF} from "@react-three/drei";
 import type {GLTF} from "three-stdlib";
-import {cloneAndScaleVector} from "../utils.ts";
+import {cloneAndScaleVector} from "../../utils.ts";
 
 interface PorciniGLTFResult extends GLTF {
     nodes: {

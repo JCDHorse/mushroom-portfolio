@@ -2,13 +2,16 @@ import React, {type ComponentProps} from "react";
 import {AMuscaria} from "./AMuscaria.tsx";
 import {Chanterelle} from "./Chanterelle.tsx";
 import {Porcini} from "./Porcini.tsx";
-import {generatePointsInRing, getRandomAngle, randomFloat} from "../utils.ts";
+import {generatePointsInRing, randomAngle, randomAngleRangeAroundZero, randomFloat} from "../../utils.ts";
 import {Euler, Vector3} from "three";
+import type {ThreeEvent} from "@react-three/fiber";
+import {MushLamp} from "./MushLamp.tsx";
 
 export type MushroomType =
     "AMuscaria" |
     "Porcini" |
-    "Chanterelle";
+    "Chanterelle" |
+    "MushLamp";
 
 export interface MushroomInfo {
     type: MushroomType;
@@ -20,29 +23,37 @@ type MushroomComponentMap = {
     AMuscaria: typeof AMuscaria,
     Chanterelle: typeof Chanterelle,
     Porcini: typeof Porcini,
+    MushLamp: typeof MushLamp,
 }
 
 const MushroomRegistry: MushroomComponentMap = {
     AMuscaria,
     Chanterelle,
     Porcini,
+    MushLamp
 }
 
 type MushroomProps<T extends keyof MushroomComponentMap> = ComponentProps<MushroomComponentMap[T]> & {
     type: T,
+    onClick?: (event: ThreeEvent<MouseEvent>) => void,
 }
 
 export function Mushroom<T extends keyof MushroomComponentMap>(props: MushroomProps<T>) {
-    const { type, ...rest } = props;
+    const { type, onClick, ...rest } = props;
     const Component = MushroomRegistry[type];
     if (type !== "Chanterelle") {
         rest.scale = new Vector3(1, 1,1);
     }
     return (
         // @ts-ignore
-        <Component {...rest}/>
+        <Component {...rest} onClick={onClick}/>
     );
 }
+
+type Range = number | {
+    min: number;
+    max: number;
+};
 
 type MushroomFieldProps<T extends keyof MushroomComponentMap> = {
     type: T;
@@ -50,25 +61,14 @@ type MushroomFieldProps<T extends keyof MushroomComponentMap> = {
     outerRadius: number;
     innerRadius: number;
     count: number;
-    monoScaleRange?: {
-        min: number;
-        max: number;
-    };
-    hatXZScaleRange?: {
-        min: number;
-        max: number;
-    };
-    hatYScaleRange?: {
-        min: number;
-        max: number;
-    };
-    footXZScaleRange?: {
-        min: number;
-        max: number;
-    }
-    footYScaleRange?: {
-        min: number;
-        max: number;
+    monoScaleRange?: Range;
+    hatXZScaleRange?: Range;
+    hatYScaleRange?: Range;
+    footXZScaleRange?: Range;
+    footYScaleRange?: Range;
+    rotationsRange?: {
+        x: Range,
+        z: Range
     }
 }
 
@@ -78,6 +78,10 @@ export function MushroomField<T extends keyof MushroomComponentMap>({
     footYScaleRange = { min: 1, max: 1 },
     footXZScaleRange = { min: 1, max: 1 },
     monoScaleRange = { min: 1, max: 1 },
+    rotationsRange = {
+        x: { min: (-1/16) * Math.PI, max: (1/16) * Math.PI },
+        z: { min: (-1/16) * Math.PI, max: (1/16) * Math.PI }
+    },
     ...props
 }: MushroomFieldProps<T>) {
     const { type, center, outerRadius, innerRadius, count, ...rest } = props;
@@ -93,7 +97,11 @@ export function MushroomField<T extends keyof MushroomComponentMap>({
                 ];
 
                 const randomScale =
-                    ({min, max}: {min: number, max: number}): number => {
+                    (range: Range): number => {
+                        if (typeof range === "number") {
+                            return range;
+                        }
+                        const { min, max } = { ...range};
                         if (min >= max) {
                             return max;
                         }
@@ -113,10 +121,23 @@ export function MushroomField<T extends keyof MushroomComponentMap>({
                 const scaleFactor = randomScale(monoScaleRange);
                 const finalScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-                const finalRotation = new Euler(0, getRandomAngle(), 0);
-                if (type === "AMuscaria") {
-                    console.log(`${JSON.stringify(hatScale)}`);
-                }
+
+                const randomRotation =
+                    (range: Range): number => {
+                        if (typeof range === "number") {
+                            return range;
+                        }
+                        if (range.max == range.min) {
+                            return range.min;
+                        }
+                        return randomAngleRangeAroundZero(range.min, range.max);
+                    };
+
+                let rotationX = randomRotation(rotationsRange.x);
+                let rotationZ = randomRotation(rotationsRange.z);
+                let rotationY = randomAngle();
+                const finalRotation = new Euler(rotationX, rotationY, rotationZ);
+                // const finalRotation = new Euler(0, randomAngle(), 0);
 
                 return (
                     // @ts-ignore
