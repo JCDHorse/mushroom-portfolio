@@ -6,7 +6,7 @@ export default function Lightning() {
             {/*    groundColor={"#3b2f1b"} // sol chaud*/}
             {/*    skyColor={"#ffffff"}*/}
             {/*/>*/}
-            <ambientLight intensity={0.2} color={"#d2c0f3"} />
+            <ambientLight intensity={0.6} color={"#d2c0f3"} />
             {/*<ambientLight intensity={0.6} color={"#c487ef"}/>*/}
             {/*<directionalLight*/}
             {/*    position={[2, 3, 2]}*/}

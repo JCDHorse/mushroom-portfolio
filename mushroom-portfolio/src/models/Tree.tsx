@@ -7,7 +7,7 @@ import { type JSX } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { type GLTF } from 'three-stdlib';
 import {Vector3} from "three";
-import {generatePointsInRing} from "../utils.ts";
+import {generatePointsInRing} from "../utils/utils.ts";
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -28,7 +28,9 @@ export function Tree({
     scale = [1, 1, 1],
     ...props
     }: TreeProps) {
-    const { nodes, materials } = useGLTF('/assets/models/Tree.glb') as unknown as GLTFResult
+
+    const modelPath = `${import.meta.env.BASE_URL}/assets/models/Tree.glb`;
+    const { nodes, materials } = useGLTF(modelPath) as unknown as GLTFResult
     const finalScale = new Vector3(scale[0] * DEFAULT_SCALE_FACTOR, scale[1] * DEFAULT_SCALE_FACTOR, scale[2] * DEFAULT_SCALE_FACTOR);
     return (
         <group {...props} scale={finalScale} dispose={null}>
@@ -53,7 +55,7 @@ export function TreeField({
 
     const positions = generatePointsInRing(center, innerRadius, outerRadius, count);
     const trees = Array.from({length: count}, (_, i) => {
-        return <Tree scale={[15,15,15]} key={i} position={positions[i]}/>
+        return <Tree scale={[15,15,15]} key={i} position={positions[i].position}/>
     });
     return <>{trees}</>
 }

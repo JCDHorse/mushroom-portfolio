@@ -1,8 +1,8 @@
-import React, {type ComponentProps} from "react";
+import {type ComponentProps, type ReactNode} from "react";
 import {AMuscaria} from "./AMuscaria.tsx";
 import {Chanterelle} from "./Chanterelle.tsx";
 import {Porcini} from "./Porcini.tsx";
-import {generatePointsInRing, randomAngle, randomAngleRangeAroundZero, randomFloat} from "../../utils.ts";
+import {generatePointsInRing, randomAngle, randomAngleRangeAroundZero, randomFloat} from "../../utils/utils.ts";
 import {Euler, Vector3} from "three";
 import type {ThreeEvent} from "@react-three/fiber";
 import {MushLamp} from "./MushLamp.tsx";
@@ -36,6 +36,7 @@ const MushroomRegistry: MushroomComponentMap = {
 type MushroomProps<T extends keyof MushroomComponentMap> = ComponentProps<MushroomComponentMap[T]> & {
     type: T,
     onClick?: (event: ThreeEvent<MouseEvent>) => void,
+    scale: Vector3,
 }
 
 export function Mushroom<T extends keyof MushroomComponentMap>(props: MushroomProps<T>) {
@@ -91,13 +92,15 @@ export function MushroomField<T extends keyof MushroomComponentMap>({
         <>
             {positions.map((position, id) => {
                 const finalPosition: number[] = [
-                    center.x + position.x,
-                    center.y + position.y,
-                    center.z + position.z,
+                    center.x + position.position.x,
+                    center.y + position.position.y,
+                    center.z + position.position.z,
                 ];
 
+                const normScale = 0.5 + position.scale * (1 - 0.5);
+
                 const randomScale =
-                    (range: Range): number => {
+                    (range: Range, scaleFactor: number): number => {
                         if (typeof range === "number") {
                             return range;
                         }
@@ -105,22 +108,21 @@ export function MushroomField<T extends keyof MushroomComponentMap>({
                         if (min >= max) {
                             return max;
                         }
-                        return randomFloat(max, min);
+                        return randomFloat(max, min) * scaleFactor;
                     };
 
                 // For mushrooms made in 2 blocks
-                const hatXZScale = randomScale(hatXZScaleRange);
-                const hatYScale = randomScale(hatYScaleRange);
+                const hatXZScale = randomScale(hatXZScaleRange, normScale);
+                const hatYScale = randomScale(hatYScaleRange, normScale);
                 const hatScale = new Vector3(hatXZScale, hatYScale, hatXZScale);
 
-                const footXZScale = randomScale(footXZScaleRange);
-                const footYScale = randomScale(footYScaleRange);
+                const footXZScale = randomScale(footXZScaleRange, normScale);
+                const footYScale = randomScale(footYScaleRange, normScale);
                 const footScale = new Vector3(footXZScale, footYScale, footXZScale);
 
                 // For mushroom made in 1 block
-                const scaleFactor = randomScale(monoScaleRange);
-                const finalScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
-
+                const scaleFactor = randomScale(monoScaleRange, normScale);
+                const finalScale = new Vector3(scaleFactor * normScale, scaleFactor * normScale, scaleFactor * normScale);
 
                 const randomRotation =
                     (range: Range): number => {
